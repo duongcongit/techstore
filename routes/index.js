@@ -1,6 +1,8 @@
 import express from 'express';
 const router = express.Router();
 
+import adminRouter from './AdminRouter.js';
+
 
 const initAPIRoute = (app) => {
 
@@ -11,6 +13,8 @@ const initAPIRoute = (app) => {
     app.get('/', (req, res)=>{
         res.send('HOME PAGE')
     })
+
+    app.use('/api/admin', adminRouter)
 
 }
 
