@@ -1,6 +1,7 @@
 import express from 'express';
 const router = express.Router();
 
+import authRouter from './AuthRouter.js';
 import adminRouter from './AdminRouter.js';
 
 
@@ -14,6 +15,7 @@ const initAPIRoute = (app) => {
         res.send('HOME PAGE')
     })
 
+    app.use('/auth', authRouter);
     app.use('/api/admin', adminRouter)
 
 }
