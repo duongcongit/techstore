@@ -4,7 +4,7 @@ import jwt from "jsonwebtoken";
 import { resolve } from "path";
 
 class JWTHelper {
-    
+    // Generate token
     generateToken = async (tokenData, secretSignature, tokenLife) => {
         return new Promise((resolve, reject) => {
     
@@ -24,6 +24,7 @@ class JWTHelper {
     
     }
     
+    // Verify token
     verifyToken = (token, secretKey) => {
         return new Promise((resolve, reject) => {
             jwt.verify(token, secretKey, (error, decoded) => {

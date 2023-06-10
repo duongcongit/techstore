@@ -51,7 +51,7 @@ class AuthController {
                     })
                 }
                 else { // Account not found
-                    res.status(401).send("Account not found!");
+                    res.status(404).send("Account not found!");
                 }
             })
     }
@@ -100,7 +100,7 @@ class AuthController {
                             }
                         }
                         else { // Not found account
-                            res.status(401).send("Not found user!");
+                            res.status(404).send("Not found user!");
                         }
                     })
             }
@@ -111,7 +111,7 @@ class AuthController {
             }
         }
         else { // No refresh token provided
-            return res.status(403).json({
+            return res.status(401).json({
                 message: 'No refresh token provided.',
             });
         }
