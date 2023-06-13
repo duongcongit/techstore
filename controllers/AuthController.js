@@ -1,27 +1,31 @@
 import bcrypt from "bcrypt";
+import { DateTime } from "luxon";
 
 import jwtHelper from '../helpers/JWTHelper.js';
 
-import Admin from "../models/Admin.js";
+import User from "../models/User.js";
+import Role from "../models/Role.js";
+
+const SALT_ROUNDS = 10;
 
 
 class AuthController {
 
-    // Admin login
-    loginAdmin = (req, res) => {
+    // Login
+    login = (req, res) => {
 
         // Get tokens from .env
-        let adminAccessTokenLife = process.env.ADMIN_ACCESS_TOKEN_LIFE;
-        let adminAccessTokenSecret = process.env.ADMIN_ACCESS_TOKEN_SECRET;
+        let accessTokenLife = process.env.ACCESS_TOKEN_LIFE;
+        let accessTokenSecret = process.env.ACCESS_TOKEN_SECRET;
 
-        let adminRefreshTokenLife = process.env.ADMIN_REFRESH_TOKEN_LIFE;
-        let adminRefreshTokenSecret = process.env.ADMIN_REFRESH_TOKEN_SECRET;
+        let refreshTokenLife = process.env.REFRESH_TOKEN_LIFE;
+        let refreshTokenSecret = process.env.REFRESH_TOKEN_SECRET;
 
         // Get data from client
         let username = req.body.username.toLowerCase();
 
         // Check account is exists or not
-        Admin.findOne({ username: username })
+        User.findOne({ username: username })
             .then(acc => {
                 if (acc) {
                     // Check password
@@ -34,9 +38,9 @@ class AuthController {
                             //
                             try {
                                 // Create access token
-                                let accessToken = await jwtHelper.generateToken(dataForToken, adminAccessTokenSecret, adminAccessTokenLife);
+                                let accessToken = await jwtHelper.generateToken(dataForToken, accessTokenSecret, accessTokenLife);
                                 // Create refresh token
-                                let refreshToken = await jwtHelper.generateToken(dataForToken, adminRefreshTokenSecret, adminRefreshTokenLife);
+                                let refreshToken = await jwtHelper.generateToken(dataForToken, refreshTokenSecret, refreshTokenLife);
                                 // Send tokens to client
                                 return res.status(200).json({ accessToken, refreshToken });
                             }
@@ -56,8 +60,56 @@ class AuthController {
             })
     }
 
+    // Register
+    register = (req, res) => {
+        let userID = req.body.userID;
+        let username = req.body.username.toLowerCase();
+        let email = req.body.email;
+
+        User.findOne({ email: email })
+            .then(user => {
+                if (user) return res.status(409).json({ Error: "Email is existed." });
+                User.findOne({ username: username })
+                    .then(user => {
+                        if (user) return res.status(409).json({ Error: "Username is existed." });
+
+                        Role.findOne({ name: "customer" })
+                            .then(role => {
+
+                                let hashPassword = bcrypt.hashSync(req.body.password, SALT_ROUNDS);
+                                let accountInfo = {
+                                    userID: userID,
+                                    username: username,
+                                    fullname: req.body.fullname,
+                                    email: email,
+                                    address: req.body.address,
+                                    password: hashPassword,
+                                    status: 0,
+                                    role: role._id,
+                                    createAt: DateTime.utc().toISO(),
+                                    deleteAt: null,
+                                    activeAt: null,
+                                    activeCode: null
+
+                                };
+                                let account = new User(accountInfo);
+                                // Save
+                                account.save()
+                                    .then(() => res.json({
+                                        Result: "Add account successfully."
+                                    }))
+
+                            })
+                    })
+            })
+
+
+        //
+
+    }
+
     // Refresh token for admin
-    resfreshTokenForAdmin = async (req, res) => {
+    /* resfreshTokenForAdmin = async (req, res) => {
         // Get tokens from .env
         let accessTokenLife = process.env.ADMIN_ACCESS_TOKEN_LIFE;
         let accessTokenSecret = process.env.ADMIN_ACCESS_TOKEN_SECRET;
@@ -76,7 +128,7 @@ class AuthController {
             try {
                 const decoded = await jwtHelper.verifyToken(refreshTokenFromClient, refreshTokenSecret);
 
-                if(username != decoded.data.username || name != decoded.data.name){
+                if (username != decoded.data.username || name != decoded.data.name) {
                     return res.status(401).send("Wrong refresh token!");
                 }
                 // Check account is exists or not
@@ -117,7 +169,9 @@ class AuthController {
         }
 
 
-    }
+    } */
+
+
 
 
 }

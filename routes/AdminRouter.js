@@ -5,9 +5,9 @@ import AuthMiddleWare from '../middleware/AuthMiddleware.js';
 import authController from '../controllers/AuthController.js';
 import AdminController from '../controllers/AdminController.js';
 
-router.post('/refresh-token-for-admin', authController.resfreshTokenForAdmin)
+// router.post('/refresh-token-for-admin', authController.resfreshTokenForAdmin)
 
-router.use(AuthMiddleWare.isAdminAuth)
+router.use([AuthMiddleWare.isAuth, AuthMiddleWare.isAdminAuth])
 
 
 // Manage Admin
