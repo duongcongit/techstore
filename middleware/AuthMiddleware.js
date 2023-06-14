@@ -36,7 +36,35 @@ class AuthMiddleWare {
 
     }
 
-    // Amin
+    // Root
+    isRootAuth = async (req, res, next) => {
+
+        // Get data from client
+        let username = req.jwtDecoded.data.username.toLowerCase();
+
+        // Check account
+        User.findOne({ username: username })
+            .then(user => {
+                if (user) {
+                    // Check role
+                    for (let i = 0; i < user.roles.length; i++) {
+                        if ( user.roles[i] === "root") {
+                            next();
+                            return;
+                        }
+                    }
+                    // Without ADMIN role
+                    res.status(403).send({ message: "Require Root Role!" });
+                    return;
+                }
+                else { // Account not found
+                    res.status(404).send("Account not found!");
+                }
+            })
+
+    }
+
+    // Admin
     isAdminAuth = async (req, res, next) => {
 
         // Get data from client
@@ -47,19 +75,15 @@ class AuthMiddleWare {
             .then(user => {
                 if (user) {
                     // Check role
-                    Role.find({ _id: { $in: user.role } })
-                        .then(roles => {
-                            for (let i = 0; i < roles.length; i++) {
-                                if (roles[i].name === "admin") {
-                                    next();
-                                    return;
-                                }
-                            }
-                            // Without ADMIN role
-                            res.status(403).send({ message: "Require Admin Role!" });
+                    for (let i = 0; i < user.roles.length; i++) {
+                        if ( user.roles[i] === "admin") {
+                            next();
                             return;
-
-                        })
+                        }
+                    }
+                    // Without ADMIN role
+                    res.status(403).send({ message: "Require Admin Role!" });
+                    return;
                 }
                 else { // Account not found
                     res.status(404).send("Account not found!");
@@ -79,19 +103,15 @@ class AuthMiddleWare {
             .then(user => {
                 if (user) {
                     // Check role
-                    Role.find({ _id: { $in: user.role } })
-                        .then(roles => {
-                            for (let i = 0; i < roles.length; i++) {
-                                if (roles[i].name === "employee") {
-                                    next();
-                                    return;
-                                }
-                            }
-                            // Without EMPLOYEE role
-                            res.status(403).send({ message: "Require Employee Role!" });
+                    for (let i = 0; i < user.roles.length; i++) {
+                        if ( user.roles[i] === "employee") {
+                            next();
                             return;
-
-                        })
+                        }
+                    }
+                    // Without ADMIN role
+                    res.status(403).send({ message: "Require Employee Role!" });
+                    return;
                 }
                 else { // Account not found
                     res.status(404).send("Account not found!");
@@ -111,19 +131,15 @@ class AuthMiddleWare {
             .then(user => {
                 if (user) {
                     // Check role
-                    Role.find({ _id: { $in: user.role } })
-                        .then(roles => {
-                            for (let i = 0; i < roles.length; i++) {
-                                if (roles[i].name === "customer") {
-                                    next();
-                                    return;
-                                }
-                            }
-                            // Without ADMIN role
-                            res.status(403).send({ message: "Require Customer Role!" });
+                    for (let i = 0; i < user.roles.length; i++) {
+                        if ( user.roles[i] === "customer") {
+                            next();
                             return;
-
-                        })
+                        }
+                    }
+                    // Without ADMIN role
+                    res.status(403).send({ message: "Require Customer Role!" });
+                    return;
                 }
                 else { // Account not found
                     res.status(404).send("Account not found!");
