@@ -12,7 +12,7 @@ const User = new Schema(
     address: {type: String},
     password: {type: String},
     status: {type: Number},
-    role: [{ type: Schema.Types.ObjectId, ref: 'Role' }],
+    roles: [{ type: String, ref: 'Role' }],
     createAt: {type: String},
     deleteAt: {type: String},
     activeAt: {type: String},

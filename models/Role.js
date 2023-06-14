@@ -4,7 +4,8 @@ const Schema = mongoose.Schema;
 
 const Role = new Schema(
   {
-    name: { type: String}
+    name: { type: String},
+    descripton: { type: String}
   }
 );
 
