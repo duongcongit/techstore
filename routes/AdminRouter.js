@@ -1,12 +1,9 @@
 import express, { response } from 'express';
+import { request } from 'http';
 const router = express.Router();
 
 import AuthMiddleWare from '../middleware/AuthMiddleware.js';
-import authController from '../controllers/AuthController.js';
 import AdminController from '../controllers/AdminController.js';
-import { request } from 'http';
-
-// router.post('/refresh-token-for-admin', authController.resfreshTokenForAdmin)
 
 router.use(AuthMiddleWare.isAuth)
 router.use(AuthMiddleWare.isAdminAuth)
