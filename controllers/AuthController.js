@@ -55,7 +55,9 @@ class AuthController {
                     })
                 }
                 else { // Account not found
-                    res.status(404).send("Account not found!");
+                    res.status(404).json({
+                        Result: "Account not found!"
+                    });
                 }
             })
     }
@@ -69,15 +71,16 @@ class AuthController {
         let customerID = "CUS" + (Math.floor(Math.random() * 89) + 10) + Math.random().toString(36).slice(2, 6);
         customerID = customerID.toUpperCase();
 
-        User.findOne({ email: email })
-            .then(user => {
-                if (user) return res.status(409).json({ Error: "Email is existed." });
-                User.findOne({ username: username })
+        User.findOne({ userID: customerID })
+            .then(acc => {
+                if (acc) { return this.register(req, res) }
+                //
+                User.findOne({ email: email })
                     .then(user => {
-                        if (user) return res.status(409).json({ Error: "Username is existed." });
-
-                        Role.findOne({ name: "customer" })
-                            .then(role => {
+                        if (user) return res.status(409).json({ Error: "Email is existed." });
+                        User.findOne({ username: username })
+                            .then(user => {
+                                if (user) return res.status(409).json({ Error: "Username is existed." });
 
                                 let hashPassword = bcrypt.hashSync(req.body.password, SALT_ROUNDS);
                                 let accountInfo = {
@@ -105,6 +108,10 @@ class AuthController {
                             })
                     })
             })
+
+
+
+
 
 
         //
