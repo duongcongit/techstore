@@ -62,9 +62,12 @@ class AuthController {
 
     // Register
     register = (req, res) => {
-        let userID = req.body.userID;
+
         let username = req.body.username.toLowerCase();
         let email = req.body.email;
+
+        let customerID = "CUS" + (Math.floor(Math.random() * 89) + 10) + Math.random().toString(36).slice(2, 6);
+        customerID = customerID.toUpperCase();
 
         User.findOne({ email: email })
             .then(user => {
@@ -78,14 +81,14 @@ class AuthController {
 
                                 let hashPassword = bcrypt.hashSync(req.body.password, SALT_ROUNDS);
                                 let accountInfo = {
-                                    userID: userID,
+                                    userID: customerID,
                                     username: username,
                                     fullname: req.body.fullname,
                                     email: email,
                                     address: req.body.address,
                                     password: hashPassword,
                                     status: 0,
-                                    role: role._id,
+                                    roles: ["customer"],
                                     createAt: DateTime.utc().toISO(),
                                     deleteAt: null,
                                     activeAt: null,
@@ -96,7 +99,7 @@ class AuthController {
                                 // Save
                                 account.save()
                                     .then(() => res.json({
-                                        Result: "Add account successfully."
+                                        Result: "Register account successfully."
                                     }))
 
                             })
