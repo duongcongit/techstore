@@ -3,6 +3,7 @@ const router = express.Router();
 
 import authRouter from './AuthRouter.js';
 import adminRouter from './AdminRouter.js';
+import validationRouter from './ValidationRouter.js';
 
 
 const initAPIRoute = (app) => {
@@ -16,7 +17,9 @@ const initAPIRoute = (app) => {
     })
 
     app.use('/auth', authRouter);
+    app.use('/api/validation', validationRouter)
     app.use('/api/admin', adminRouter)
+    
 
 }
 
