@@ -1,11 +1,15 @@
 import mongoose from "mongoose";
 
+import slugGenerator from "mongoose-slug-updater";
+mongoose.plugin(slugGenerator)
+
 const Schema = mongoose.Schema;
 
 const Category = new Schema(
   {
     categoryID: { type: String},
-    name: { type: String}
+    categoryName: { type: String},
+    slug: { type: String, slug: 'categoryName', unique: true},
   }
 );
 
