@@ -52,10 +52,8 @@ class AdminController {
 
     User.findOne({ userID: adminID })
       .then(acc => {
-        if (acc) {
-          res.status(409).send({ message: "Failed! User ID is already existed!" });
-          return;
-        }
+        // If already have account with this ID, create new ID
+        if (acc) { return this.addAdmin(req, res); }
 
         let accountInfo = {
           userID: adminID,
@@ -251,10 +249,8 @@ class AdminController {
 
     User.findOne({ userID: employeeID })
       .then(acc => {
-        if (acc) {
-          res.status(409).send({ message: "Failed! User ID is already existed!" });
-          return;
-        }
+        // If already have account with this ID, create new ID
+        if (acc) { return this.addEmployee(req, res); }
 
         let accountInfo = {
           userID: employeeID,
