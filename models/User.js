@@ -9,7 +9,7 @@ const User = new Schema(
     fullname: { type: String },
     phone: { type: String },
     email: {type: String},
-    address: {type: String},
+    address: {type: Object},
     gender: {type: String},
     password: {type: String},
     status: {type: Number},
