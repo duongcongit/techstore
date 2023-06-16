@@ -42,7 +42,7 @@ class EmployeeController {
                     return res.status(404).json({ Error: "Category not found!" })
                 }
                 // Get products
-                Product.find({ category: categorySlug }, { _id: 0, __v: 0, password: 0 })
+                Product.find({ category: category.categoryID }, { _id: 0, __v: 0 })
                     .then(products => {
                         res.status(200).send(products)
                     })
@@ -183,6 +183,102 @@ class EmployeeController {
                 });
 
         })
+    }
+
+    // Edit Category
+    editCategory = async (req, res) => {
+        let categoryID = req.body.categoryID;
+
+        Category.findOne({ categoryID: categoryID })
+            .then((category) => {
+                if (!category) { // Category not found
+                    return res.status(404).json({ Error: "Category not found!" })
+                }
+                //
+                let categoryInfo = {
+                    categoryName: req.body.categoryName
+                }
+                Category.findOneAndUpdate({ categoryID: categoryID }, categoryInfo)
+                    .then(() => {
+                        return res.status(200).json({ Result: "Update category successfully!" })
+                    })
+                    .catch(err => { return res.status(500).send(err) })
+            })
+
+    }
+
+    // Edit Brand
+    editBrand = async (req, res) => {
+        let brandID = req.body.brandID;
+
+        Brand.findOne({ brandID: brandID })
+            .then((brand) => {
+                if (!brand) { // Brand not found
+                    return res.status(404).json({ Error: "Brand not found!" })
+                }
+                //
+                let brandInfo = {
+                    brandName: req.body.brandName
+                }
+                Brand.findOneAndUpdate({ brandID: brandID }, brandInfo)
+                    .then(() => {
+                        return res.status(200).json({ Result: "Update brand successfully!" })
+                    })
+                    .catch(err => { return res.status(500).send(err) })
+            })
+
+    }
+
+    // Detele Category
+    deleteCategory = async (req, res) => {
+        let categoryID = req.body.categoryID;
+        // Check product
+        Product.find({ category: categoryID }, { _id: 0, __v: 0 })
+            .then(products => {
+                if (products.length > 0) {
+                    return res.status(202).json({ Error: "Existing products with this category." })
+                }
+                // Delete category
+                Category.findOneAndRemove({ categoryID: categoryID })
+                    .then((category) => {
+                        if(!category){
+                            return res.status(404).json({ Error: "Category not found!" })
+                        }
+                        return res.status(200).json({ Result: "Detete category successfully!" })
+                    })
+                    .catch(err => {
+                        return res.status(500).send(err);
+                    })
+            })
+            .catch(err => {
+                return res.status(500).send(err);
+            })
+    }
+
+    // Detele Brand
+    deleteBrand = async (req, res) => {
+        let brandID = req.body.brandID;
+        // Check product
+        Product.find({ brand: brandID }, { _id: 0, __v: 0 })
+            .then(products => {
+                if (products.length > 0) {
+                    return res.status(202).json({ Error: "Existing products with this brand." })
+                }
+                // Delete brand
+                Brand.findOneAndRemove({ brandID: brandID })
+                    .then((brand) => {
+                        if(!brand){
+                            return res.status(404).json({ Error: "Brand not found!" })
+                        }
+                        return res.status(200).json({ Result: "Detete brand successfully!" })
+                    })
+                    .catch(err => {
+                        return res.status(500).send(err);
+                    })
+            })
+            .catch(err => {
+                return res.status(500).send(err);
+            })
     }
 
 }
