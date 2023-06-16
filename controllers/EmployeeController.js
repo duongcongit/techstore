@@ -9,9 +9,14 @@ class EmployeeController {
     // Get all products
     getAllProducts = (req, res) => {
         // Get products
-        Product.find({}, { _id: 0, __v: 0, password: 0 })
+        Product.find({}, { _id: 0, __v: 0 })
             .then(products => {
-                res.status(200).send(products)
+                let data = {
+                    status: "ok",
+                    message: { Fetched: products.length },
+                    data: products
+                }
+                res.status(200).send(data)
             })
             .catch(err => {
                 return res.status(500).send(err);
@@ -21,9 +26,14 @@ class EmployeeController {
     // Get products available
     getProductsAvailable = (req, res) => {
         // Get products, status = 1
-        Product.find({ $and: [{ status: 1 }, { stock: { $gt: 0 } }] }, { _id: 0, __v: 0, password: 0 })
+        Product.find({ $and: [{ status: 1 }, { stock: { $gt: 0 } }] }, { _id: 0, __v: 0 })
             .then(products => {
-                res.status(200).send(products)
+                let data = {
+                    status: "ok",
+                    message: { Fetched: products.length },
+                    data: products
+                }
+                res.status(200).send(data)
             })
             .catch(err => {
                 return res.status(500).send(err);
@@ -34,7 +44,6 @@ class EmployeeController {
     // Get products by category
     getProductsByCategory = (req, res) => {
         let categorySlug = req.params.category;
-
         // Check Category
         Category.findOne({ slug: categorySlug })
             .then(category => {
@@ -44,17 +53,17 @@ class EmployeeController {
                 // Get products
                 Product.find({ category: category.categoryID }, { _id: 0, __v: 0 })
                     .then(products => {
-                        res.status(200).send(products)
+                        let data = {
+                            status: "ok",
+                            message: { Fetched: products.length },
+                            data: products
+                        }
+                        res.status(200).send(data)
                     })
                     .catch(err => {
                         return res.status(500).send(err);
                     })
-
             })
-
-
-
-
     }
 
     // Add Product
