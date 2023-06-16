@@ -12,6 +12,7 @@ router.use(AuthMiddleWare.isEmployeeAuth)
 router.get('/get-all-products', EmployeeController.getAllProducts)
 router.get('/get-products-available', EmployeeController.getProductsAvailable)
 router.get('/get-products-by-category/:category', EmployeeController.getProductsByCategory)
+router.get('/get-product-detail/:product', EmployeeController.getProductDetail)
 
 router.post('/add-product', EmployeeController.addProduct)
 router.post('/add-category', EmployeeController.addCategory)

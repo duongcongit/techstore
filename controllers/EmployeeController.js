@@ -6,6 +6,7 @@ import Brand from "../models/Brand.js";
 
 class EmployeeController {
 
+    // ==================== GET ====================
     // Get all products
     getAllProducts = (req, res) => {
         // Get products
@@ -16,7 +17,7 @@ class EmployeeController {
                     message: { Fetched: products.length },
                     data: products
                 }
-                res.status(200).send(data)
+                return res.status(200).send(data)
             })
             .catch(err => {
                 return res.status(500).send(err);
@@ -33,7 +34,7 @@ class EmployeeController {
                     message: { Fetched: products.length },
                     data: products
                 }
-                res.status(200).send(data)
+                return res.status(200).send(data)
             })
             .catch(err => {
                 return res.status(500).send(err);
@@ -58,7 +59,7 @@ class EmployeeController {
                             message: { Fetched: products.length },
                             data: products
                         }
-                        res.status(200).send(data)
+                        return res.status(200).send(data)
                     })
                     .catch(err => {
                         return res.status(500).send(err);
@@ -66,6 +67,29 @@ class EmployeeController {
             })
     }
 
+    // Get product detail
+    getProductDetail = (req, res) => {
+        let productSlug = req.params.product;
+        Product.findOne({ slug: productSlug }, { _id: 0, __v: 0 })
+            .then(product => {
+                if (!product) { // Category not found
+                    return res.status(404).json({ Error: "Product not found!" })
+                }
+                // Data
+                let data = {
+                    status: "ok",
+                    message: null,
+                    data: product
+                }
+                return res.status(200).send(data)
+            })
+            .catch(err => { // Error
+                return res.status(500).send(err);
+            })
+
+    }
+
+    // ==================== ADD ====================
     // Add Product
     addProduct = async (req, res) => {
         let currentTime = DateTime.utc().toISO(); // Current time
@@ -108,21 +132,6 @@ class EmployeeController {
 
 
     }
-
-    // Check SKU
-    checkSKU = async (req, res, next) => {
-        let SKU = req.body.SKU;
-        Product.findOne({ SKU: SKU })
-            .then(product => {
-                if (product) {
-                    return res.status(409).json({
-                        message: 'SKU code is existed!.',
-                    });
-                }
-                next();
-            })
-    }
-
 
     // Add Category
     addCategory = async (req, res) => {
@@ -195,6 +204,7 @@ class EmployeeController {
         })
     }
 
+    // ==================== UPDATE ====================
     // Update product
     updateProduct = async (req, res) => {
         let productID = req.body.productID;
@@ -264,6 +274,7 @@ class EmployeeController {
 
     }
 
+    // ==================== DELETE ====================
     // Soft delete product
     softDeleteProduct = async (req, res) => {
         let productID = req.body.productID;
@@ -340,6 +351,21 @@ class EmployeeController {
             })
             .catch(err => {
                 return res.status(500).send(err);
+            })
+    }
+
+    // ==================== CHECK ====================
+    // Check SKU
+    checkSKU = async (req, res, next) => {
+        let SKU = req.body.SKU;
+        Product.findOne({ SKU: SKU })
+            .then(product => {
+                if (product) {
+                    return res.status(409).json({
+                        message: 'SKU code is existed!.',
+                    });
+                }
+                next();
             })
     }
 
