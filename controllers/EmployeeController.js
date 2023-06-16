@@ -114,6 +114,7 @@ class EmployeeController {
             })
     }
 
+
     // Add Category
     addCategory = async (req, res) => {
         let categoryID = req.body.categoryID;
@@ -185,48 +186,100 @@ class EmployeeController {
         })
     }
 
-    // Edit Category
-    editCategory = async (req, res) => {
-        let categoryID = req.body.categoryID;
+    // Update product
+    updateProduct = async (req, res) => {
+        let productID = req.body.productID;
+        // Data for update
+        let productInfo = {
+            productName: req.body.productName,
+            SKU: req.body.SKU,
+            detail: req.body.detail,
+            stock: req.body.stock,
+            sold: req.body.sold,
+            proce: req.body.proce,
+            status: req.body.status,
+            category: req.body.category,
+            brand: req.body.brand,
+            productImage: req.body.productImage
+        };
+        // Find one and update by product id
+        Product.findOneAndUpdate({ productID: productID }, productInfo)
+            .then((product) => {
+                // Product not found
+                if (!product) {
+                    return res.status(404).json({ Error: "Product not found!" })
+                }
+                // Update successfully
+                return res.status(200).json({
+                    Result: "Update product successfully!",
+                    productID: productID
+                })
+            })
+            .catch(err => { return res.status(500).send(err) })
+    }
 
-        Category.findOne({ categoryID: categoryID })
+    // Update Category
+    updateCategory = async (req, res) => {
+        let categoryID = req.body.categoryID;
+        let categoryInfo = {
+            categoryName: req.body.categoryName
+        }
+        // Update
+        Category.findOneAndUpdate({ categoryID: categoryID }, categoryInfo)
             .then((category) => {
                 if (!category) { // Category not found
                     return res.status(404).json({ Error: "Category not found!" })
                 }
-                //
-                let categoryInfo = {
-                    categoryName: req.body.categoryName
-                }
-                Category.findOneAndUpdate({ categoryID: categoryID }, categoryInfo)
-                    .then(() => {
-                        return res.status(200).json({ Result: "Update category successfully!" })
-                    })
-                    .catch(err => { return res.status(500).send(err) })
+                // Update successfully
+                return res.status(200).json({ Result: "Update category successfully!" })
             })
-
+            .catch(err => { return res.status(500).send(err) })
     }
 
-    // Edit Brand
-    editBrand = async (req, res) => {
+    // Update Brand
+    updateBrand = async (req, res) => {
         let brandID = req.body.brandID;
-
-        Brand.findOne({ brandID: brandID })
+        let brandInfo = {
+            brandName: req.body.brandName
+        }
+        // Update
+        Brand.findOneAndUpdate({ brandID: brandID }, brandInfo)
             .then((brand) => {
                 if (!brand) { // Brand not found
                     return res.status(404).json({ Error: "Brand not found!" })
                 }
                 //
-                let brandInfo = {
-                    brandName: req.body.brandName
-                }
-                Brand.findOneAndUpdate({ brandID: brandID }, brandInfo)
-                    .then(() => {
-                        return res.status(200).json({ Result: "Update brand successfully!" })
-                    })
-                    .catch(err => { return res.status(500).send(err) })
+                return res.status(200).json({ Result: "Update brand successfully!" })
             })
+            .catch(err => { return res.status(500).send(err) })
 
+    }
+
+    // Soft delete product
+    softDeleteProduct = async (req, res) => {
+        let productID = req.body.productID;
+        let productInfo = {
+            status: -1
+        }
+        // Update
+        Product.findOneAndUpdate({ productID: productID }, productInfo)
+            .then(product => {
+                if (!product) { // Not found
+                    return res.status(404).json({ Error: "Product not found!" })
+                }
+                if (product.status == -1) { // Deleted before
+                    return res.status(204).json({
+                        Error: "Product has been deleted before."
+                    })
+                }
+                // Successfully
+                return res.status(200).json({
+                    Result: "Soft delete product successfully."
+                })
+            })
+            .catch(err => { // Error
+                return res.status(500).send(err);
+            })
     }
 
     // Detele Category
@@ -241,7 +294,7 @@ class EmployeeController {
                 // Delete category
                 Category.findOneAndRemove({ categoryID: categoryID })
                     .then((category) => {
-                        if(!category){
+                        if (!category) {
                             return res.status(404).json({ Error: "Category not found!" })
                         }
                         return res.status(200).json({ Result: "Detete category successfully!" })
@@ -267,7 +320,7 @@ class EmployeeController {
                 // Delete brand
                 Brand.findOneAndRemove({ brandID: brandID })
                     .then((brand) => {
-                        if(!brand){
+                        if (!brand) {
                             return res.status(404).json({ Error: "Brand not found!" })
                         }
                         return res.status(200).json({ Result: "Detete brand successfully!" })

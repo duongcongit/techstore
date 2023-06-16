@@ -16,8 +16,12 @@ router.get('/get-products-by-category/:category', EmployeeController.getProducts
 router.post('/add-product', EmployeeController.addProduct)
 router.post('/add-category', EmployeeController.addCategory)
 router.post('/add-brand', EmployeeController.addBrand)
-router.post('/edit-category', EmployeeController.editCategory)
-router.post('/edit-brand', EmployeeController.editBrand)
+
+router.post('/update-product', EmployeeController.updateProduct)
+router.post('/update-category', EmployeeController.updateCategory)
+router.post('/update-brand', EmployeeController.updateBrand)
+
+router.delete('/soft-delete-product', EmployeeController.softDeleteProduct)
 router.delete('/delete-category', EmployeeController.deleteCategory)
 router.delete('/delete-brand', EmployeeController.deleteBrand)
 
