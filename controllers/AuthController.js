@@ -49,14 +49,21 @@ class AuthController {
                             }
 
                         }
+                        if (err) {
+                            return res.status(401).json({
+                                Error: "Wrong password"
+                            });
+                        }
                         else { // Wrong password
-                            res.status(401).send("Wrong password");
+                            return res.status(401).json({
+                                Error: "Wrong password"
+                            });
                         }
                     })
                 }
                 else { // Account not found
                     res.status(404).json({
-                        Result: "Account not found!"
+                        Error: "Account not found!"
                     });
                 }
             })
@@ -103,7 +110,7 @@ class AuthController {
                                 // Save
                                 account.save()
                                     .then(() => {
-                                        return res.status(201).json({ Result: "Register account successfully."})
+                                        return res.status(201).json({ Result: "Register account successfully." })
                                     })
 
                             })

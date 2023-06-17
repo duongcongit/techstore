@@ -15,7 +15,15 @@ const initAPIRoute = (app) => {
     app.use(express.json());
     app.use(express.text());
 
-    app.get('/', (req, res)=>{
+    app.use(function(req, res, next) {
+        res.setHeader('Access-Control-Allow-Origin', '*');
+        res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE');
+        res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+        res.setHeader('Access-Control-Allow-Credentials', true);
+        next();
+    });
+
+    app.get('/', (req, res) => {
         res.send('HOME PAGE')
     })
 
@@ -25,7 +33,7 @@ const initAPIRoute = (app) => {
     app.use('/api/employee', employeeRouter)
     app.use('/api/customer', customerRouter)
     app.use('/api/validation', validationRouter)
-    
+
 
 }
 
