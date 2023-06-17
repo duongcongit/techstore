@@ -4,7 +4,7 @@ const Schema = mongoose.Schema;
 
 const Cart = new Schema(
   {
-    customerID: { type: String},
+    username: { type: String},
     productID: { type: String },
     quantity: { type: Number },
     timeAdd: { type: String },

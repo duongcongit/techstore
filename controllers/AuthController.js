@@ -87,6 +87,7 @@ class AuthController {
                                     userID: customerID,
                                     username: username,
                                     fullname: req.body.fullname,
+                                    phone: req.body.phone,
                                     email: email,
                                     address: req.body.address,
                                     password: hashPassword,
@@ -101,9 +102,9 @@ class AuthController {
                                 let account = new User(accountInfo);
                                 // Save
                                 account.save()
-                                    .then(() => res.json({
-                                        Result: "Register account successfully."
-                                    }))
+                                    .then(() => {
+                                        return res.status(201).json({ Result: "Register account successfully."})
+                                    })
 
                             })
                     })

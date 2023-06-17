@@ -54,11 +54,13 @@ class AuthMiddleWare {
                         }
                     }
                     // Without ADMIN role
-                    res.status(403).send({ message: "Require Root Role!" });
-                    return;
+                    return res.status(403).send({ message: "Require Root Role!" });
                 }
                 else { // Account not found
-                    res.status(404).send("Account not found!");
+                    return res.status(404).json({
+                        status: "failed",
+                        Error: "Account not found!"
+                    });
                 }
             })
 
@@ -82,11 +84,13 @@ class AuthMiddleWare {
                         }
                     }
                     // Without ADMIN role
-                    res.status(403).send({ message: "Require Admin Role!" });
-                    return;
+                    return res.status(403).send({ message: "Require Admin Role!" });
                 }
                 else { // Account not found
-                    res.status(404).send("Account not found!");
+                    return res.status(404).json({
+                        status: "failed",
+                        Error: "Account not found!"
+                    });
                 }
             })
 
@@ -110,11 +114,13 @@ class AuthMiddleWare {
                         }
                     }
                     // Without ADMIN role
-                    res.status(403).send({ message: "Require Employee Role!" });
-                    return;
+                    return res.status(403).send({ message: "Require Employee Role!" });
                 }
                 else { // Account not found
-                    res.status(404).send("Account not found!");
+                    return res.status(404).json({
+                        status: "failed",
+                        Error: "Account not found!"
+                    });
                 }
             })
 
@@ -138,20 +144,19 @@ class AuthMiddleWare {
                         }
                     }
                     // Without ADMIN role
-                    res.status(403).send({ message: "Require Customer Role!" });
-                    return;
+                    return res.status(403).send({ message: "Require Customer Role!" });
                 }
                 else { // Account not found
-                    res.status(404).send("Account not found!");
+                    return res.status(404).json({
+                        status: "failed",
+                        Error: "Account not found!"
+                    });
                 }
             })
 
     }
 
-
 }
-
-
 
 
 export default new AuthMiddleWare();
