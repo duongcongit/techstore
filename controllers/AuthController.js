@@ -24,49 +24,53 @@ class AuthController {
         // Get data from client
         let username = req.body.username.toLowerCase();
 
-        // Check account is exists or not
-        User.findOne({ username: username })
-            .then(acc => {
-                if (acc) {
-                    // Check password
-                    bcrypt.compare(req.body.password, acc.password, async (err, result) => {
-                        if (result) {
-                            let dataForToken = {
-                                username: acc.username,
-                                name: acc.name
-                            };
-                            //
-                            try {
-                                // Create access token
-                                let accessToken = await jwtHelper.generateToken(dataForToken, accessTokenSecret, accessTokenLife);
-                                // Create refresh token
-                                let refreshToken = await jwtHelper.generateToken(dataForToken, refreshTokenSecret, refreshTokenLife);
-                                // Send tokens to client
-                                return res.status(200).json({ accessToken, refreshToken });
-                            }
-                            catch (error) { // Error
-                                return res.status(500).json(error);
-                            }
+        setTimeout(() => {
+            User.findOne({ username: username })
+                .then(acc => {
+                    if (acc) {
+                        // Check password
+                        bcrypt.compare(req.body.password, acc.password, async (err, result) => {
+                            if (result) {
+                                let dataForToken = {
+                                    username: acc.username,
+                                    name: acc.name
+                                };
+                                //
+                                try {
+                                    // Create access token
+                                    let accessToken = await jwtHelper.generateToken(dataForToken, accessTokenSecret, accessTokenLife);
+                                    // Create refresh token
+                                    let refreshToken = await jwtHelper.generateToken(dataForToken, refreshTokenSecret, refreshTokenLife);
+                                    // Send tokens to client
+                                    return res.status(200).json({ accessToken, refreshToken });
+                                }
+                                catch (error) { // Error
+                                    return res.status(500).json(error);
+                                }
 
-                        }
-                        if (err) {
-                            return res.status(401).json({
-                                Error: "Wrong password"
-                            });
-                        }
-                        else { // Wrong password
-                            return res.status(401).json({
-                                Error: "Wrong password"
-                            });
-                        }
-                    })
-                }
-                else { // Account not found
-                    res.status(404).json({
-                        Error: "Account not found!"
-                    });
-                }
-            })
+                            }
+                            if (err) {
+                                return res.status(401).json({
+                                    Error: "Wrong password"
+                                });
+                            }
+                            else { // Wrong password
+                                return res.status(401).json({
+                                    Error: "Wrong password"
+                                });
+                            }
+                        })
+                    }
+                    else { // Account not found
+                        res.status(404).json({
+                            Error: "Account not found!"
+                        });
+                    }
+                })
+        }, 2000)
+
+        // Check account is exists or not
+
     }
 
     // Register
@@ -82,57 +86,41 @@ class AuthController {
             .then(acc => {
                 if (acc) { return this.register(req, res) }
                 //
-                User.findOne({ email: email })
-                    .then(user => {
-                        if (user) return res.status(409).json({ Error: "Email is existed." });
-                        User.findOne({ username: username })
-                            .then(user => {
-                                if (user) return res.status(409).json({ Error: "Username is existed." });
+                let hashPassword = bcrypt.hashSync(req.body.password, SALT_ROUNDS);
+                let accountInfo = {
+                    userID: customerID,
+                    username: username,
+                    fullname: req.body.fullname,
+                    phone: req.body.phone,
+                    email: email,
+                    address: req.body.address,
+                    password: hashPassword,
+                    status: 0,
+                    roles: ["customer"],
+                    createAt: DateTime.utc().toISO(),
+                    deleteAt: null,
+                    activeAt: null,
+                    activeCode: null
 
-                                let hashPassword = bcrypt.hashSync(req.body.password, SALT_ROUNDS);
-                                let accountInfo = {
-                                    userID: customerID,
-                                    username: username,
-                                    fullname: req.body.fullname,
-                                    phone: req.body.phone,
-                                    email: email,
-                                    address: req.body.address,
-                                    password: hashPassword,
-                                    status: 0,
-                                    roles: ["customer"],
-                                    createAt: DateTime.utc().toISO(),
-                                    deleteAt: null,
-                                    activeAt: null,
-                                    activeCode: null
-
-                                };
-                                let account = new User(accountInfo);
-                                // Save
-                                account.save()
-                                    .then(() => {
-                                        return res.status(201).json({ Result: "Register account successfully." })
-                                    })
-
-                            })
+                };
+                let account = new User(accountInfo);
+                // Save
+                account.save()
+                    .then(() => {
+                        return res.status(201).json({ Result: "Register account successfully." })
                     })
             })
-
-
-
-
-
-
         //
 
     }
 
-    // Refresh token for admin
-    /* resfreshTokenForAdmin = async (req, res) => {
+    // Refresh token
+    resfreshToken = async (req, res) => {
         // Get tokens from .env
-        let accessTokenLife = process.env.ADMIN_ACCESS_TOKEN_LIFE;
-        let accessTokenSecret = process.env.ADMIN_ACCESS_TOKEN_SECRET;
+        let accessTokenLife = process.env.ACCESS_TOKEN_LIFE;
+        let accessTokenSecret = process.env.ACCESS_TOKEN_SECRET;
 
-        let refreshTokenSecret = process.env.ADMIN_REFRESH_TOKEN_SECRET;
+        let refreshTokenSecret = process.env.REFRESH_TOKEN_SECRET;
 
         // Get refresh token fromm client
         let refreshTokenFromClient = req.body.refreshToken || req.query.refreshToken || req.headers["refresh-token"];
@@ -150,7 +138,7 @@ class AuthController {
                     return res.status(401).send("Wrong refresh token!");
                 }
                 // Check account is exists or not
-                Admin.findOne({ username: username })
+                User.findOne({ username: username })
                     .then(async acc => {
                         if (acc) {
                             //
@@ -187,7 +175,7 @@ class AuthController {
         }
 
 
-    } */
+    }
 
 
 
